@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.UI.WebControls;
+using Newtonsoft.Json.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Demo_UpWebShell
 {
@@ -93,5 +95,76 @@ namespace Demo_UpWebShell
             }
             return result;
         }
+
+        //Fix Upload
+        public static string UploadFile_Fixed(FileUpload oFile, string[] lstFileType, int iMaxLength, string sFolderRoot)
+        {
+            string result;
+            try
+            {
+                string ext = Path.GetExtension(oFile.FileName).ToLowerInvariant();
+
+                // Check MIME + magic
+                if (!IsImageFile(oFile.PostedFile, lstFileType))
+                    throw new Exception("Upload sai định dạng tệp tin. Chỉ cho phép upload các định dạng : " + string.Join(", ", lstFileType));                
+                if (oFile.PostedFile.ContentLength > iMaxLength * 1024 * 1024)
+                {
+                    throw new Exception("Tệp tin quá dung lượng cho phép. Tối đa chỉ được upload " + iMaxLength + "MB.");
+                }
+                if (!Directory.Exists(HttpContext.Current.Server.MapPath(sFolderRoot)))
+                {
+                    Directory.CreateDirectory(HttpContext.Current.Server.MapPath(sFolderRoot));
+                }
+                if (File.Exists(HttpContext.Current.Server.MapPath(sFolderRoot + "/" + Path.GetFileName(oFile.PostedFile.FileName))))
+                {
+                    throw new Exception("Đã có Tệp tin tồn tại. Đường dẫn file : " + sFolderRoot + "/" + Path.GetFileName(oFile.PostedFile.FileName));
+                }
+
+                string fileName = Guid.NewGuid().ToString() + ext;
+                string physicalPath = HttpContext.Current.Server.MapPath(sFolderRoot);
+                string savePath = Path.Combine(physicalPath, fileName);
+
+
+                // Lưu file
+                oFile.PostedFile.SaveAs(savePath);
+
+                // Trả về đường dẫn tương đối
+                return sFolderRoot.TrimEnd('/') + "/" + fileName;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return result;
+        }
+
+
+        public static bool IsImageFile(HttpPostedFile file, string[] allowedMimeTypes)
+        {
+            string mimeType = file.ContentType?.ToLowerInvariant();
+            if (string.IsNullOrEmpty(mimeType) || !allowedMimeTypes.Contains(mimeType))
+                return false;
+
+            byte[] header = new byte[8];
+            file.InputStream.Read(header, 0, header.Length);
+            file.InputStream.Position = 0;
+
+            switch (mimeType)
+            {
+                case "image/jpeg":
+                    return header[0] == 0xFF && header[1] == 0xD8 && header[2] == 0xFF;
+
+                case "image/png":
+                    return header[0] == 0x89 && header[1] == 0x50 && header[2] == 0x4E && header[3] == 0x47;
+
+                case "image/gif":
+                    return header[0] == 0x47 && header[1] == 0x49 && header[2] == 0x46 &&
+                           header[3] == 0x38 && (header[4] == 0x37 || header[4] == 0x39) && header[5] == 0x61;
+
+                default:
+                    return false;
+            }
+        }
+
     }
 }

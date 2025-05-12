@@ -62,6 +62,7 @@ nupkg/
 
 # Uploads folder (if you want to exclude uploaded files)
 Uploads/
+UploadFixed/
 
 # Logs
 *.log

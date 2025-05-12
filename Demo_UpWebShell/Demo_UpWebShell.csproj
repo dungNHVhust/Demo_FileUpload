@@ -116,6 +116,7 @@
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\Site.css" />
+    <Content Include="FixUpload.aspx" />
     <Content Include="RandomFile.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -184,6 +185,13 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="FixUpload.aspx.cs">
+      <DependentUpon>FixUpload.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FixUpload.aspx.designer.cs">
+      <DependentUpon>FixUpload.aspx</DependentUpon>
+    </Compile>
     <Compile Include="RandomFile.aspx.cs">
       <DependentUpon>RandomFile.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -233,6 +241,7 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.7.0.slim.min.map" />
     <Content Include="Scripts\jquery-3.7.0.min.map" />
+    <Content Include="UploadFixed\web.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
