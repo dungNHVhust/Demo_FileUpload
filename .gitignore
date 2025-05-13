@@ -61,8 +61,16 @@ project.lock.json
 nupkg/
 
 # Uploads folder (if you want to exclude uploaded files)
-Uploads/
-UploadFixed/
+Uploads/*.jpeg
+Uploads/*.jpg
+Uploads/*.gif
+Uploads/*.aspx
+
+
+UploadFixed/*.jpeg
+UploadFixed/*.jpg
+UploadFixed/*.gif
+UploadFixed/*.aspx
 
 # Logs
 *.log
